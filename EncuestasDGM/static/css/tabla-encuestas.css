@@ -1,0 +1,5 @@
+div.encuestas { margin-bottom: 10px; }
+table.encuestas-admin {	width: 100%; }
+table.encuestas-admin th { border: 1px solid #e0e0e0; padding: 5px; }
+table.encuestas-admin tr{ border: 1px solid #e0e0e0; }
+table.encuestas-admin td{ border: 1px solid #e0e0e0; padding: 5px; }

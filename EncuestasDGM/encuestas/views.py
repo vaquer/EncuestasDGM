@@ -1,12 +1,14 @@
+import json
 from django.shortcuts import render
-from django.http import Http404
+from django.http import Http404, JsonResponse
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.contrib.auth.decorators import login_required
 from .models import Encuesta
 from .model_utils import crear_encuesta, modificar_encuesta, contestar_encuesta
 
 
 # Create your views here.
-@login_required(login_url='')
+@login_required(login_url='/encuestas/usuarios/login/')
 def administrador_encuestas(request, page=1):
     """
     Vista del admin en datos.gob
@@ -15,10 +17,22 @@ def administrador_encuestas(request, page=1):
     URL: /encuestas/administrador/encuestas/
     METODOS: GET
     """
-    pass
+    encuestas = Encuesta.objects.all()
+    pagina_encuestas = False
+    if len(encuestas) > 0:
+        paginador_encuestas = Paginator(encuestas, 10)
+
+        try:
+            pagina_encuestas = paginador_encuestas.page(page)
+        except PageNotAnInteger:
+            pagina_encuestas = paginador_encuestas.page(1)
+        except EmptyPage:
+            pagina_encuestas = False
+
+    return render(request, 'encuestas/administrador/encuestas.html', {'pagina': pagina_encuestas})
 
 
-@login_required(login_url='')
+@login_required(login_url='/encuestas/usuarios/login/')
 def editar_encuesta(request, slug=''):
     """
     Vista del admin en datos.gob
@@ -28,7 +42,50 @@ def editar_encuesta(request, slug=''):
     METODOS: POST, GET
     PARAMETROS_POST: {'titulo', 'encabezado', 'abierta', 'publica', 'preguntas'}
     """
-    pass
+    # Buscar la encuesta en la base de datos
+    try:
+        encuesta = Encuesta.objects.get(slug=slug)
+    except:
+        raise Http404
+
+    estatus = error = ''
+
+    # Modificar la encuesta
+    if request.method == 'POST':
+        try:
+            if modificar_encuesta(encuesta, request.POST.get('titulo', ''), request.POST.get('encabezado', ''), json.loads(request.POST.get('preguntas', [])), request.POST.get('publicada', False), request.POST.get('abierta', False)) is not None:
+                estatus = 'ok'
+        except Exception, e:
+            # Capura del error para feedback
+            error = e
+            estatus = 'error'
+        return JsonResponse({'estatus': estatus, 'error': str(error)})
+
+    return render(request, 'encuestas/administrador/editar_encuesta.html', {'encuesta': encuesta})
+
+
+@login_required(login_url='/encuestas/usuarios/login/')
+def crear_encuesta_view(request):
+    """
+    Vista del admin en datos.gob
+    donde se pueden crear una encuesta
+    URL: /encuestas/administrador/crear-encuesta/
+    METODOS: POST, GET
+    PARAMETROS_POST: {'titulo', 'encabezado', 'abierta', 'publica', 'preguntas'}
+    """
+    error = estatus = ''
+    # Crear la encuesta
+    if request.method == 'POST':
+        try:
+            encuesta = crear_encuesta(request.POST.get('titulo', ''), request.POST.get('encabezado', ''), json.loads(request.POST.get('preguntas', '[]')), request.POST.get('publicada', False), request.POST.get('abierta', False))
+            estatus = 'ok'
+        except Exception, e:
+            # Se regresan los errores de la validacion
+            error = e
+            estatus = 'error'
+        return JsonResponse({'estatus': estatus, 'error': str(error)})
+
+    return render(request, 'encuestas/administrador/crear_encuesta.html')
 
 
 def responder_encuesta(request, slug=''):
@@ -43,17 +100,22 @@ def responder_encuesta(request, slug=''):
     if not slug.strip():
         raise Http404
 
+    # Buscar la encuesta en la base
     try:
         encuesta = Encuesta.objects.get(slug=slug, abierta=True, publicada=True)
     except:
         raise Http404
 
-    errores, estatus = ([], '')
+    error = estatus = ''
 
+    # Responder encuesta
     if request.method == 'POST':
-        if not request.POST.get('respuestas', []):
-            raise Http404
-        if contestar_encuesta(encuesta.id, request.POST.get('respuestas')):
+        try:
+            encuesta = contestar_encuesta(encuesta, json.loads(request.POST.get('respuestas', [])))
             estatus = 'ok'
+        except Exception, e:
+            estatus = 'error'
+            error = e
+        return JsonResponse({'error': str(error), 'estatus': estatus})
 
-    return render(request, 'template.html', {'encuesta': encuesta, 'errores': errores})
+    return render(request, 'encuestas/responder.html', {'encuesta': encuesta})

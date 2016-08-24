@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Responder {{encuesta.title}}{% endblock %}
+
+
+{% block css_links %}
+<link rel="stylesheet" type="text/css" href="/static/css/crear_encuesta.css">
+{% endblock %}
+
+{% block breadcum %}
+    <li ng-repeat="crumb in crumbs" class="ng-scope"><a ui-sref="front.section( crumb.params )" ui-sref-opts="{ inherit : false }" class="ng-binding" href="/encuestas/">Encuestas</a></li>
+    <li ng-repeat="crumb in crumbs" class="ng-scope"><a ui-sref="front.section( crumb.params )" ui-sref-opts="{ inherit : false }" class="ng-binding" href="/encuestas/administrador/editar-encuesta/{{encuesta.slug}}/">{{encuesta.titulo}}</a></li>
+{% endblock %}
+
+{% block content %}
+    <h2 class="section-title ng-binding">{{encuesta.titulo}}</h2>
+    <div class="preguntas">
+        <form action="." method="POST" class="preguntas-encuesta">
+            {% csrf_token %}
+            <div class="preguntas-form">
+                {% for pregunta in encuesta.preguntas %}
+                    <div class="pregunta">
+                        <label link="{{pregunta.texto}}">{{pregunta.texto}}</label>
+                        {% if pregunta.opciones %}
+                            {% with forloop.counter as numero_pregunta  %}
+                            {% for opcion in pregunta.opciones  %}
+                                <input type="radio" name="{{pregunta.texto}}" value="{{forloop.counter}}">{{opcion}}
+                            {% endfor %}
+                            
+                            {% endwith %}
+                        {% else %}
+                            <input type="text" name="{{pregunta.texto}}">
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </form>
+    <a class="submit">Responder</a>
+    </div>
+{% endblock %}
+
+{% block script_js %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        function serializaForm($form, esUnArray){
+            var arraySinIndexar = $form.serializeArray();
+
+            return $.map(arraySinIndexar, function(n, i){
+                console.log(n);
+                return JSON.parse('{"' + n['name'] + '": "' + n['value'] + '" }');
+            });
+
+            //return arrayIndexado;
+        }
+
+        function obtenRespuestasPorPregunta($divPreguntas){
+            return $.map($divPreguntas.find("div.pregunta"), function(n, i){
+                return {'pregunta': $(n).find('label').text(), 'valor':$(n).find('input').attr('type') === 'radio'? $(n).find('input:checked').val() : $(n).find('input')[0].value}
+            });
+        }
+
+        $("a.submit").click(function(event){
+            var formSerializado = {"csrfmiddlewaretoken": $('input[name="csrfmiddlewaretoken"]').val()};
+            formSerializado['respuestas'] = JSON.stringify(obtenRespuestasPorPregunta($("div.preguntas-form")));
+
+            $.post(".", formSerializado).done(function(respuesta){
+                // Procesamiento de la respuesta
+                console.log(respuesta);
+                
+            }).fail(function(respuesta){
+                // Procesamiento de la respuesta
+                console.log(respuesta);
+            });
+        });
+    });
+</script>
+{% endblock %}

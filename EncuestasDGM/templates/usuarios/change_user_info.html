@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title_page %}Modificar datos de Usuario{% endblock %}
+
+{% block content %}
+    <h1>Cambiar informacion usuario</h1>
+    <div>
+        {% if message %}
+            <p>{{message}}</p>
+        {% endif %}
+        {{form.non_field_errors}}
+        <form action="." method="POST">
+            {% csrf_token %}
+            {{form.username.errors}}
+            <label for="id_username">Username:</label>
+            {{form.username}}
+            {{form.first_name.errors}}
+            <label for="id_first_name">Nombre:</label>
+            {{form.first_name}}
+            {{form.last_name.errors}}
+            <label for="id_last_name">Apellido:</label>
+            {{form.last_name}}
+            {{form.email.errors}}
+            <label for="id_email">Email:</label>
+            {{form.email}}
+            <input type="submit" value="Enviar">
+        </form>
+    </div>
+{% endblock %}

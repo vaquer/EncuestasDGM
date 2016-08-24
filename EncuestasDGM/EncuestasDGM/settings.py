@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'usuarios',
+    'encuestas'
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -76,8 +78,12 @@ WSGI_APPLICATION = 'EncuestasDGM.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.environ.get('POSTGRESENCUESTA_POSTGRES_DB', 'encuestas'),
+        'USER': os.environ.get('POSTGRESENCUESTA_POSTGRES_USER', 'encuestas'),
+        'PASSWORD': os.environ.get('POSTGRESENCUESTA_POSTGRES_PASSWORD', 'mysecurepass'),
+        'HOST': os.environ.get('POSTGRES_HOST', '0.0.0.0'),
+        'PORT': os.environ.get('POSTGRES_PORT', '5433')
     }
 }
 
@@ -119,7 +125,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_FINDERS = []
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static/')]
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+]
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static/')
+]
 
 connect('encuesta_dgm', host='0.0.0.0', port=27017)

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Sistema de Encuestas{% endblock %}
+
+{% block css_links %}
+<link rel="stylesheet" type="text/css" href="/static/css/tabla-encuestas.css">
+{% endblock %}
+
+{% block breadcum %}
+    <li ng-repeat="crumb in crumbs" class="ng-scope"><a ui-sref="front.section( crumb.params )" ui-sref-opts="{ inherit : false }" class="ng-binding" href="/encuestas/administrador/">Encuestas</a></li><!-- end ngRepeat: crumb in crumbs -->
+{% endblock %}
+
+{% block session_menu %}
+    {% if request.user.is_authenticated %}
+        <li ng-class="{'active':category_id == undefined}" class="active">
+            <a ui-sref="front.section({ section : section, category : null, category_id : null, section_id : section_id })" href="/encuestas/usuarios/logout/">
+                <span ng-if="section == 'blog'" class="ng-scope">Salir</span>
+            </a>
+        </li>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <h2 class="section-title ng-binding">Encuestas</h2>
+    <div class="opciones">
+        <a href="/encuestas/administrador/crear-encuesta/">Crear encuesta</a>
+    </div>
+    <div class="encuestas">
+    {% if pagina %}
+        <table class="encuestas-admin">
+            <tbody>
+                <tr>
+                    <th>Encuesta</th>
+                    <th>Encabezado</th>
+                    <th>Fecha</th>
+                    <th>Publicada</th>
+                    <th>Abierta</th>
+                </tr>
+                {% for encuesta in pagina %}
+                <tr>
+                    <td><a href="/encuestas/administrador/editar-encuesta/{{encuesta.slug}}/">{{encuesta.titulo}}</a></td>
+                    <td>{{encuesta.encabezado|truncatewords:5}}</td>
+                    <td>{{encuesta.fecha_creacion}}</td>
+                    <td>{{encuesta.publicada}}</td>
+                    <td>{{encuesta.abierta}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <h3>Por el momento no existen encuestas creadas. Crea tu primer encuesta <a href="/encuestas/administrador/crear-encuesta/">aqui.</a></h3>
+    {% endif %}
+    </div>
+{% endblock %}
