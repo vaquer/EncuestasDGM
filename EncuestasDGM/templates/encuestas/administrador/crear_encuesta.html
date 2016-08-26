@@ -3,6 +3,7 @@
 
 {% block css_links %}
 <link rel="stylesheet" type="text/css" href="/static/css/crear_encuesta.css">
+<link rel="stylesheet" type="text/css" href="/static/css/sweetalert.css?123">
 {% endblock %}
 
 {% block breadcum %}
@@ -25,18 +26,57 @@
     <div>
         <form method="POST" action="." class="datos-encuesta">
             {% csrf_token %}
-            <label link="titulo">Titulo</label>
-            <input type="text" name="titulo">
-            <label link="titulo">Encabezado</label>
-            <input type="text" name="encabezado">
-            <label link="titulo">Abierta</label>
+            <!-- <label link="titulo">Titulo</label> -->
+            <div class="row">
+                <div class="col-sm-8">
+                    <div class="data-table">                
+                        <input class="form-control" type="text" name="titulo" placeholder="Título de la encuesta">
+                        <br>
+                        <textarea rows="4" class="form-control" name="encabezado" placeholder="Descripción"></textarea>
+                        <br>
+                        <div class="text-right">
+                            <label class="checkbox-inline">
+                              <input type="checkbox" id="inlineCheckbox1" value="option1" name="abierta"> Abierta
+                            </label>
+                            <label class="checkbox-inline">
+                              <input type="checkbox" id="inlineCheckbox2" value="option2" name="publicada"> Publicada
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <a  type="button"
+                        id="nueva-pregunta"
+                        tabindex="0"
+                        class="btn btn-sq-sm btn-primary" 
+                        role="button" 
+                        data-trigger="focus">
+                        +
+                    </a>
+                    
+                    <div id="popover-content" class="hidden">
+                      <div>
+                        <a href="javascript:addQuestion('abierta');"  class="btn-abierta">Pregunta abierta</a>
+                        <hr>
+                        <a href="javascript:addQuestion('cerrada');" >Pregunta cerrada (4 opciones)</a>
+                      </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- <label link="titulo">Encabezado</label> -->
+
+            <!-- <label link="titulo">Abierta</label>
             <input type="checkbox" name="abierta">
             <label link="titulo">Publicada</label>
-            <input type="checkbox" name="publicada">
+            <input type="checkbox" name="publicada"> -->
         </form>
-        <h3>Preguntas</h3>
-        <a class="nuevapregunta">+</a>
-        <div class="preguntas">
+        <br>
+
+        <div class="preguntas"></div>
+        
+        <!-- <div class="preguntas">
+            
             <div class="pregunta abierta">
                 <p class="titulo">¿Esta es una buena prégunta?</p>
             </div>
@@ -49,13 +89,22 @@
                     <li>Opcion 4</li>
                 </ul>
             </div>
+            
+        </div> -->
+
+        <div class="row">
+            <div class="col-sm-8">
+                <button type="button" class="submit btn btn-primary">Publicar encuesta</button>
+            </div>
         </div>
-        <a class="submit">Enviar</a>
+
     </div>
 {% endblock %}
 
 {% block script_js %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script src="/static/js/sweetalert.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function(){
         function serializaForm($form){
@@ -90,6 +139,61 @@
                 console.log(respuesta);
             });
         });
+
+        $(function(){
+
+            // Popover nueva pregunta
+            $("#nueva-pregunta").popover({
+                html : true, 
+                content: function() {
+                  return $("#popover-content").html();
+                }
+            });
+        
+        });
+
+        $(document).on("click",".delete-question", function () {
+           var elementDelete = $(this).parent().parent().parent().parent(); // or var clickedBtnID = this.id
+           console.log($(this).parent().parent().parent().parent());
+           $(elementDelete).remove();
+        });
+
     });
+
+    //Agrega las preguntas dentro del contenedor .preguntas
+    function addQuestion(tipo) {
+
+        var openQuestion = '<div class="row tipo pregunta abierta"><div class="col-sm-8"><div class="data-table"><h5>Pregunta abierta</h5><input class="form-control titulo" type="text" name="pregunta_abierta" placeholder="Título de la pregunta"><br><div class="text-right"><a href="#" class="delete-question">Eliminar</a></div></div>&nbsp;</div></div>';
+
+        var closeQuestion = '<div class="row tipo pregunta cerrada"><div class="col-sm-8"><div class="data-table"><h5>Pregunta cerrada</h5><input class="form-control titulo" type="text" name="pregunta_cerrada" placeholder="Título de la pregunta"><br><h5>Respuestas</h5><ul class="opciones"><li><input class="form-control" type="text" name="opcion1" placeholder="Opción 1"></li><li><input class="form-control" type="text" name="opcion2" placeholder="Opción 2"></li><li><input class="form-control" type="text" name="opcion3" placeholder="Opción 3"></li><li><input class="form-control" type="text" name="opcion4" placeholder="Opción 4"></li></ul><br><div class="text-right"><a href="#" class="delete-question">Eliminar</a></div></div>&nbsp;</div></div>';
+
+        var toDom = "."+tipo;
+
+        if (toDom == '.abierta') {
+            var questionToDom = openQuestion;
+        } else {
+            var questionToDom = closeQuestion;
+        };
+
+        $( ".preguntas" ).each(function( event ) {
+
+            var elements = document.getElementsByClassName('tipo').length;
+
+            if ( elements < 2 ) {
+            $(".preguntas").append(questionToDom);
+            } else {
+                swal({
+                    type: "error",
+                    title: "Error",
+                    text: "Solo puede agregar 2 preguntas",
+                    confirmButtonText: "Aceptar"
+                })
+                return false;
+            }
+
+        });
+        
+    };//End addQuestion
+
 </script>
 {% endblock %}

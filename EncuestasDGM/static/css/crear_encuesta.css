@@ -1,1 +1,23 @@
 form input { display: block; }
+textarea.form-control {
+    height: auto !important;
+}
+.btn-sq-sm {
+ 	width: 50px !important;
+	height: 50px !important;
+	font-size: 35px !important;
+	padding: 0 !important;
+	margin: 0 !important;
+    border-radius: 0;
+}
+.data-table label { font-size: 13px; }
+.delete-question {
+	color: #BD362F;
+    font-size: 14px;
+}
+.submit {
+	width: auto !important;
+    margin: 20px 0 20px !important;
+    font-size: 14px !important;
+    text-transform: none !important;
+}
