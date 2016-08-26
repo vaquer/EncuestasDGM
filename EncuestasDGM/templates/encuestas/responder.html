@@ -5,6 +5,7 @@
 
 {% block css_links %}
 <link rel="stylesheet" type="text/css" href="/static/css/crear_encuesta.css">
+<link rel="stylesheet" type="text/css" href="/static/css/sweetalert.css">
 {% endblock %}
 
 {% block breadcum %}
@@ -14,33 +15,49 @@
 
 {% block content %}
     <h2 class="section-title ng-binding">{{encuesta.titulo}}</h2>
+    <p>{{encuesta.encabezado}}</p>
     <div class="preguntas">
         <form action="." method="POST" class="preguntas-encuesta">
             {% csrf_token %}
             <div class="preguntas-form">
                 {% for pregunta in encuesta.preguntas %}
-                    <div class="pregunta">
-                        <label link="{{pregunta.texto}}">{{pregunta.texto}}</label>
-                        {% if pregunta.opciones %}
-                            {% with forloop.counter as numero_pregunta  %}
-                            {% for opcion in pregunta.opciones  %}
-                                <input type="radio" name="{{pregunta.texto}}" value="{{forloop.counter}}">{{opcion}}
-                            {% endfor %}
-                            
-                            {% endwith %}
-                        {% else %}
-                            <input type="text" name="{{pregunta.texto}}">
-                        {% endif %}
+                    <div class="row pregunta">
+                        <div class="col-sm-8">
+                            <label link="{{pregunta.texto}}">{{pregunta.texto}}</label><br>
+                            {% if pregunta.opciones %}
+                                {% with forloop.counter as numero_pregunta  %}
+                                {% for opcion in pregunta.opciones  %}
+                                <div class="radio">
+                                    <label>
+                                      <input type="radio" name="{{pregunta.texto}}" value="{{forloop.counter}}">{{opcion}}
+                                    </label>
+                                </div>
+                                    <!-- <input type="radio" name="{{pregunta.texto}}" value="{{forloop.counter}}">{{opcion}} -->
+                                {% endfor %}
+                                
+                                {% endwith %}
+                            {% else %}
+                                <input type="text" class="form-control" name="{{pregunta.texto}}">
+                            {% endif %}
+                            &nbsp;
+                        </div>
                     </div>
                 {% endfor %}
             </div>
         </form>
-    <a class="submit">Responder</a>
+
+        <div class="row">
+            <div class="col-sm-8">
+                <button type="button" class="submit btn btn-primary">Responder</button>
+            </div>
+        </div>
+
     </div>
 {% endblock %}
 
 {% block script_js %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script src="/static/js/sweetalert.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function(){
         function serializaForm($form, esUnArray){
@@ -60,13 +77,31 @@
             });
         }
 
-        $("a.submit").click(function(event){
+        $(".submit").click(function(event){
             var formSerializado = {"csrfmiddlewaretoken": $('input[name="csrfmiddlewaretoken"]').val()};
             formSerializado['respuestas'] = JSON.stringify(obtenRespuestasPorPregunta($("div.preguntas-form")));
 
             $.post(".", formSerializado).done(function(respuesta){
                 // Procesamiento de la respuesta
                 console.log(respuesta);
+                if (respuesta.estatus == "ok") {
+                    swal({
+                    confirmButtonText: "Cerrar",
+                    title: "Éxito",
+                    text: "Su respuesta se guardó correctamente.",
+                    type: "success"
+                    },
+                    function(){
+                      window.location = "http://datos.gob.mx/";
+                    });
+                } else {
+                    swal({
+                    confirmButtonText: "Aceptar",
+                    title: "Error",
+                    text: respuesta.error,
+                    type: "error"
+                    });
+                }
                 
             }).fail(function(respuesta){
                 // Procesamiento de la respuesta
