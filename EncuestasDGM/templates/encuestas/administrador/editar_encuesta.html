@@ -3,6 +3,7 @@
 
 {% block css_links %}
 <link rel="stylesheet" type="text/css" href="/static/css/crear_encuesta.css">
+<link rel="stylesheet" type="text/css" href="/static/css/sweetalert.css?123">
 {% endblock %}
 
 {% block breadcum %}
@@ -25,7 +26,49 @@
     <div>
         <form method="POST" action="." class="datos-encuesta">
             {% csrf_token %}
-            <label link="titulo">Titulo</label>
+
+
+            <div class="row">
+                <div class="col-sm-8">
+                    <div class="data-table">                
+                        <input class="form-control" type="text" name="titulo" value="{{encuesta.titulo}}">
+                        <br>
+                        <textarea rows="4" class="form-control" name="encabezado" id="description"></textarea>
+                        <br>
+                        <div class="text-right">
+                            <label class="checkbox-inline">
+                              <input type="checkbox" name="abierta" {% if encuesta.abierta == True %}checked{% endif %}> Abierta
+                            </label>
+                            <label class="checkbox-inline">
+                              <input type="checkbox" name="publicada" {% if encuesta.publicada == True %}checked{% endif %}> Publicada
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <a  type="button"
+                        id="nueva-pregunta"
+                        tabindex="0"
+                        class="btn btn-sq-sm btn-primary" 
+                        role="button" 
+                        data-trigger="focus">
+                        +
+                    </a>
+                    
+                    <div id="popover-content" class="hidden">
+                      <div>
+                        <a href="javascript:addQuestion('abierta');"  class="btn-abierta">Pregunta abierta</a>
+                        <hr>
+                        <a href="javascript:addQuestion('cerrada');" >Pregunta cerrada (4 opciones)</a>
+                      </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+
+            <!-- <label link="titulo">Titulo</label>
             <input type="text" name="titulo" value="{{encuesta.titulo}}">
             <label link="encabezado">Encabezado</label>
             <input type="text" name="encabezado" value="{{encuesta.encabezado}}">
@@ -33,9 +76,46 @@
             {{encuesta.abierta}}
             <input type="checkbox" name="abierta" {% if encuesta.abierta == True %}checked{% endif %}>
             <label link="publicada">Publicada</label>
-            <input type="checkbox" name="publicada" {% if encuesta.publicada == True %}checked{% endif %}>
+            <input type="checkbox" name="publicada" {% if encuesta.publicada == True %}checked{% endif %}> -->
         </form>
-        <h3>Preguntas</h3>
+
+        <br>
+        <div class="preguntas">
+            {% for pregunta in encuesta.preguntas %}
+            <div class="row tipo pregunta {% if pregunta.opciones %}cerrada{% else %}abierta{% endif %}">
+                <div class="col-sm-8">
+                    <div class="data-table">
+                        {% if pregunta.opciones %}
+                        <h5>Pregunta cerrada</h5>
+                        <input class="form-control titulo" type="text" name="pregunta_cerrada" value="{{pregunta.texto}}" placeholder="Título de la pregunta"><br>
+                            <ul class="opciones">
+                                {% for opcion in pregunta.opciones %}
+                                    <li>
+                                        <input class="form-control" type="text" name="" value="{{opcion}}" placeholder="Escriba una respuesta">
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                        <h5>Pregunta abierta</h5>
+                        <input class="form-control titulo" type="text" name="pregunta_abierta" value="{{pregunta.texto}}" placeholder="Título de la pregunta"><br>
+                        {% endif %}
+                        <div class="text-right">
+                            <a href="#" class="delete-question">Eliminar</a>
+                        </div>
+                    </div>&nbsp;
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
+
+        <div class="row">
+            <div class="col-sm-8">
+                <button type="button" class="submit btn btn-primary">Enviar</button>
+            </div>
+        </div>
+
+        <!-- <h3>Preguntas</h3>
         <a class="nuevapregunta">+</a>
         <div class="preguntas">
             {% for pregunta in encuesta.preguntas %}
@@ -51,12 +131,14 @@
                 </div>
             {% endfor %}
         </div>
-        <a class="submit">Enviar</a>
+        <a class="submit">Enviar</a> -->
     </div>
 {% endblock %}
 
 {% block script_js %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="/static/js/sweetalert.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function(){
         function serializaForm($form){
@@ -72,25 +154,101 @@
 
         function obtenPreguntas($divPreguntas){
             return $.map($divPreguntas.find("div.pregunta"), function(n, i){
-                var pregunta = $(n).find('p.titulo').text(),
+                var pregunta = $(n).find('.titulo').val(),
                     tipoPregunta = $(n).hasClass('abierta') ? 'abierta' : 'cerrada',
-                    opciones = tipoPregunta === 'cerrada' ? $.map($(n).find("ul.opciones li"), function(a, b){ return $(a).text(); }) : [];
-
+                    opciones = tipoPregunta === 'cerrada' ? $.map($(n).find("ul.opciones li input"), function(a, b){ return $(a).val(); }) : [];
+                console.log(opciones);
                 return {'texto': pregunta, 'opciones': opciones}
             });
         }
 
-        $("a.submit").click(function(event){
+        $(".submit").click(function(event){
             var formSerializado = serializaForm($("form.datos-encuesta"));
             formSerializado['preguntas'] = JSON.stringify(obtenPreguntas($("div.preguntas")));
             console.log(formSerializado['preguntas']);
             $.post(".", formSerializado).done(function(respuesta){
-                console.log(respuesta);
-                
+                console.log('post-->',respuesta);
+                if (respuesta.estatus == "ok") {
+                    swal({
+                    confirmButtonText: "Cerrar",
+                    title: "Éxito",
+                    text: "La encuesta se actualizó correctamente.",
+                    type: "success"
+                    },
+                    function(){
+                      window.location = "/encuestas/administrador/";
+                    });
+                } else {
+                    swal({
+                    confirmButtonText: "Aceptar",
+                    title: "Error",
+                    text: respuesta.error,
+                    type: "error"
+                    });
+                }
             }).fail(function(respuesta){
-                console.log(respuesta);
+                console.log('fail-->',respuesta);
             });
         });
+
+        //////////Frontend////////////
+
+        $("textarea#description").val("{{encuesta.encabezado}}");
+
+        $(function(){
+
+            // Popover nueva pregunta
+            $("#nueva-pregunta").popover({
+                html : true, 
+                content: function() {
+                  return $("#popover-content").html();
+                }
+            });
+        
+        });
+
+        $(document).on("click",".delete-question", function () {
+           var elementDelete = $(this).parent().parent().parent().parent(); // or var clickedBtnID = this.id
+           console.log($(this).parent().parent().parent().parent());
+           $(elementDelete).remove();
+        });
+
     });
+
+    //Agrega las preguntas dentro del contenedor .preguntas
+    function addQuestion(tipo) {
+
+        var openQuestion = '<div class="row tipo pregunta abierta"><div class="col-sm-8"><div class="data-table"><h5>Pregunta abierta</h5><input class="form-control titulo" type="text" name="pregunta_abierta" placeholder="Título de la pregunta"><br><div class="text-right"><a href="#" class="delete-question">Eliminar</a></div></div>&nbsp;</div></div>';
+
+        var closeQuestion = '<div class="row tipo pregunta cerrada"><div class="col-sm-8"><div class="data-table"><h5>Pregunta cerrada</h5><input class="form-control titulo" type="text" name="pregunta_cerrada" placeholder="Título de la pregunta"><br><h5>Respuestas</h5><ul class="opciones"><li><input class="form-control" type="text" name="opcion1" placeholder="Opción 1"></li><li><input class="form-control" type="text" name="opcion2" placeholder="Opción 2"></li><li><input class="form-control" type="text" name="opcion3" placeholder="Opción 3"></li><li><input class="form-control" type="text" name="opcion4" placeholder="Opción 4"></li></ul><br><div class="text-right"><a href="#" class="delete-question">Eliminar</a></div></div>&nbsp;</div></div>';
+
+        var toDom = "."+tipo;
+
+        if (toDom == '.abierta') {
+            var questionToDom = openQuestion;
+        } else {
+            var questionToDom = closeQuestion;
+        };
+
+        $( ".preguntas" ).each(function( event ) {
+
+            var elements = document.getElementsByClassName('tipo').length;
+
+            if ( elements < 2 ) {
+            $(".preguntas").append(questionToDom);
+            } else {
+                swal({
+                    type: "error",
+                    title: "Error",
+                    text: "Solo puede agregar 2 preguntas",
+                    confirmButtonText: "Aceptar"
+                })
+                return false;
+            }
+
+        });
+        
+    };//End addQuestion
+
 </script>
 {% endblock %}

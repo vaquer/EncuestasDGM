@@ -36,10 +36,10 @@
                         <br>
                         <div class="text-right">
                             <label class="checkbox-inline">
-                              <input type="checkbox" id="inlineCheckbox1" value="option1" name="abierta"> Abierta
+                              <input type="checkbox" name="abierta"> Abierta
                             </label>
                             <label class="checkbox-inline">
-                              <input type="checkbox" id="inlineCheckbox2" value="option2" name="publicada"> Publicada
+                              <input type="checkbox" name="publicada"> Publicada
                             </label>
                         </div>
                     </div>
@@ -120,23 +120,41 @@
 
         function obtenPreguntas($divPreguntas){
             return $.map($divPreguntas.find("div.pregunta"), function(n, i){
-                var pregunta = $(n).find('p.titulo').text(),
+                var pregunta = $(n).find('.titulo').val(),
                     tipoPregunta = $(n).hasClass('abierta') ? 'abierta' : 'cerrada',
-                    opciones = tipoPregunta === 'cerrada' ? $.map($(n).find("ul.opciones li"), function(a, b){ return $(a).text(); }) : [];
-
+                    opciones = tipoPregunta === 'cerrada' ? $.map($(n).find("ul.opciones li input"), function(a, b){ return $(a).val(); }) : [];
+                console.log(opciones);
                 return {'texto': pregunta, 'opciones': opciones}
             });
         }
 
-        $("a.submit").click(function(event){
+        $(".submit").click(function(event){
             var formSerializado = serializaForm($("form.datos-encuesta"));
             formSerializado['preguntas'] = JSON.stringify(obtenPreguntas($("div.preguntas")));
             console.log(formSerializado['preguntas']);
             $.post(".", formSerializado).done(function(respuesta){
-                console.log(respuesta);
+                console.log('post-->',respuesta);
+                if (respuesta.estatus == "ok") {
+                    swal({
+                    confirmButtonText: "Cerrar",
+                    title: "Éxito",
+                    text: "La encuesta se guardó correctamente.",
+                    type: "success"
+                    },
+                    function(){
+                      window.location = "/encuestas/administrador/";
+                    });
+                } else {
+                    swal({
+                    confirmButtonText: "Aceptar",
+                    title: "Error",
+                    text: respuesta.error,
+                    type: "error"
+                    });
+                }
                 
             }).fail(function(respuesta){
-                console.log(respuesta);
+                console.log('fail-->',respuesta);
             });
         });
 
