@@ -141,10 +141,10 @@ def valida_campos_respuesta(respuesta, encuesta=None):
     una Respuesta en base de datos
     Return: Bool
     """
-    if not str(respuesta['valor']).strip():
-        raise Exception("Se necesita responder la pregunta")
+    if not str(respuesta.get('valor', '')).strip():
+        raise Exception("Se necesita responder la pregunta {0}".format(respuesta.get('pregunta', '')))
 
-    if not respuesta['pregunta']:
+    if not respuesta.get('pregunta', ''):
         raise Exception("Se necesita una pregunta para la respuesta")
 
     if encuesta:
