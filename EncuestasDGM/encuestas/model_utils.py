@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import hashlib
 from datetime import datetime
 from django.utils.text import slugify
@@ -102,7 +103,7 @@ def validar_campos_encuesta(titulo, encabezado, preguntas, abierta=False, public
         raise Exception("Se necesita un titulo para crear la encuesta")
 
     if not encabezado.strip():
-        raise Exception("Se necesita un encabezado para crear la encuesta")
+        raise Exception("Se necesita una descripción para crear la encuesta")
 
     if len(preguntas) == 0:
         raise Exception("Se necesita al menos una pregunta para crear la encuesta")
@@ -141,7 +142,7 @@ def valida_campos_respuesta(respuesta, encuesta=None):
     Return: Bool
     """
     if not str(respuesta['valor']).strip():
-        raise Exception("Se necesita un valor para la respuesta")
+        raise Exception("Se necesita responder la pregunta")
 
     if not respuesta['pregunta']:
         raise Exception("Se necesita una pregunta para la respuesta")
