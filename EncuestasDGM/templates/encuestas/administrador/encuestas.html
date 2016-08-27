@@ -2,7 +2,9 @@
 {% block title %}Sistema de Encuestas{% endblock %}
 
 {% block css_links %}
-<link rel="stylesheet" type="text/css" href="/static/css/tabla-encuestas.css">
+<link rel="stylesheet" type="text/css" href="/static/css/crear_encuesta.css">
+<link rel="stylesheet" type="text/css" href="/static/css/tabla-encuestas.css?123">
+<link rel="stylesheet" type="text/css" href="/static/css/sweetalert.css">
 {% endblock %}
 
 {% block breadcum %}
@@ -22,30 +24,34 @@
 {% block content %}
     <h2 class="section-title ng-binding">Encuestas</h2>
     <div class="opciones">
-        <a href="/encuestas/administrador/crear-encuesta/">Crear encuesta</a>
+        <a href="/encuestas/administrador/crear-encuesta/" type="button" class="btn btn-sq-sm btn-primary" title="Crear encuesta">+</a>
     </div>
     <div class="encuestas">
     {% if pagina %}
-        <table class="encuestas-admin">
-            <tbody>
-                <tr>
-                    <th>Encuesta</th>
-                    <th>Encabezado</th>
-                    <th>Fecha</th>
-                    <th>Publicada</th>
-                    <th>Abierta</th>
-                </tr>
-                {% for encuesta in pagina %}
-                <tr>
-                    <td><a href="/encuestas/administrador/editar-encuesta/{{encuesta.slug}}/">{{encuesta.titulo}}</a></td>
-                    <td>{{encuesta.encabezado|truncatewords:5}}</td>
-                    <td>{{encuesta.fecha_creacion}}</td>
-                    <td>{{encuesta.publicada}}</td>
-                    <td>{{encuesta.abierta}}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="table table-responsive">
+            <table class="table encuestas-admin">
+                <thead>
+                    <tr>
+                        <th>Encuesta</th>
+                        <th>Encabezado</th>
+                        <th>Fecha</th>
+                        <th>Publicada</th>
+                        <th>Abierta</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for encuesta in pagina %}
+                    <tr>
+                        <td><a href="/encuestas/administrador/editar-encuesta/{{encuesta.slug}}/">{{encuesta.titulo}}</a></td>
+                        <td>{{encuesta.encabezado|truncatewords:5}}</td>
+                        <td>{{encuesta.fecha_creacion}}</td>
+                        <td>{{encuesta.publicada}}</td>
+                        <td>{{encuesta.abierta}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     {% else %}
         <h3>Por el momento no existen encuestas creadas. Crea tu primer encuesta <a href="/encuestas/administrador/crear-encuesta/">aqui.</a></h3>
     {% endif %}

@@ -1,5 +1,23 @@
 div.encuestas { margin-bottom: 10px; }
-table.encuestas-admin {	width: 100%; }
+/*table.encuestas-admin {	width: 100%; }
 table.encuestas-admin th { border: 1px solid #e0e0e0; padding: 5px; }
 table.encuestas-admin tr{ border: 1px solid #e0e0e0; }
-table.encuestas-admin td{ border: 1px solid #e0e0e0; padding: 5px; }
+table.encuestas-admin td{ border: 1px solid #e0e0e0; padding: 5px; }*/
+
+.opciones { float: right; margin: 0 0 20px 0 }
+
+table tbody td {
+    padding-top: .5em !important;
+    padding-bottom: .3em !important;
+    vertical-align: middle;
+}
+
+.table>thead>tr>th {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.table>tbody>tr>td {
+    line-height: 3.428571 !important;
+    font-size: 14px;
+}
