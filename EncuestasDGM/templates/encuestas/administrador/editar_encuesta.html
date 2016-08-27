@@ -26,8 +26,6 @@
     <div>
         <form method="POST" action="." class="datos-encuesta">
             {% csrf_token %}
-
-
             <div class="row">
                 <div class="col-sm-8">
                     <div class="data-table">                
@@ -65,18 +63,6 @@
 
                 </div>
             </div>
-
-
-
-            <!-- <label link="titulo">Titulo</label>
-            <input type="text" name="titulo" value="{{encuesta.titulo}}">
-            <label link="encabezado">Encabezado</label>
-            <input type="text" name="encabezado" value="{{encuesta.encabezado}}">
-            <label link="abierta">Abierta</label>
-            {{encuesta.abierta}}
-            <input type="checkbox" name="abierta" {% if encuesta.abierta == True %}checked{% endif %}>
-            <label link="publicada">Publicada</label>
-            <input type="checkbox" name="publicada" {% if encuesta.publicada == True %}checked{% endif %}> -->
         </form>
 
         <br>

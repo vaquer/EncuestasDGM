@@ -17,7 +17,7 @@ def administrador_encuestas(request, page=1):
     URL: /encuestas/administrador/encuestas/
     METODOS: GET
     """
-    encuestas = Encuesta.objects.all()
+    encuestas = Encuesta.objects.all().order_by('-fecha_creacion')
     pagina_encuestas = False
     if len(encuestas) > 0:
         paginador_encuestas = Paginator(encuestas, 10)
