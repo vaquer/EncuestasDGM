@@ -23,7 +23,7 @@
                 {% for pregunta in encuesta.preguntas %}
                     <div class="row pregunta">
                         <div class="col-sm-8">
-                            <label link="{{pregunta.texto}}">{{pregunta.texto}}</label><br>
+                            <label class="texto-pregunta" link="{{pregunta.texto}}">{{pregunta.texto}}</label><br>
                             {% if pregunta.opciones %}
                                 {% with forloop.counter as numero_pregunta  %}
                                 {% for opcion in pregunta.opciones  %}
@@ -32,7 +32,6 @@
                                       <input type="radio" name="{{pregunta.texto}}" value="{{forloop.counter}}">{{opcion}}
                                     </label>
                                 </div>
-                                    <!-- <input type="radio" name="{{pregunta.texto}}" value="{{forloop.counter}}">{{opcion}} -->
                                 {% endfor %}
                                 
                                 {% endwith %}
@@ -67,13 +66,11 @@
                 console.log(n);
                 return JSON.parse('{"' + n['name'] + '": "' + n['value'] + '" }');
             });
-
-            //return arrayIndexado;
         }
 
         function obtenRespuestasPorPregunta($divPreguntas){
             return $.map($divPreguntas.find("div.pregunta"), function(n, i){
-                return {'pregunta': $(n).find('label').text(), 'valor':$(n).find('input').attr('type') === 'radio'? $(n).find('input:checked').val() : $(n).find('input')[0].value}
+                return {'pregunta': $(n).find('label.texto-pregunta').text(), 'valor':$(n).find('input').attr('type') === 'radio'? $(n).find('input:checked').val() : $(n).find('input')[0].value}
             });
         }
 
