@@ -79,11 +79,11 @@ WSGI_APPLICATION = 'EncuestasDGM.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ.get('POSTGRESENCUESTA_ENV_POSTGRES_DB', 'encuestas'),
-        'USER': os.environ.get('POSTGRESENCUESTA_ENV_POSTGRES_USER', 'encuestas'),
-        'PASSWORD': os.environ.get('POSTGRESENCUESTA_ENV_POSTGRES_PASSWORD', 'mysecurepass'),
-        'HOST': os.environ.get('POSTGRESENCUESTA_PORT_5432_TCP_ADDR', '0.0.0.0'),
-        'PORT': os.environ.get('POSTGRESENCUESTA_PORT_5432_TCP_PORT', '5433')
+        #'NAME': os.environ.get('POSTGRESENCUESTA_ENV_POSTGRES_DB', 'encuestas'),
+        #'USER': os.environ.get('POSTGRESENCUESTA_ENV_POSTGRES_USER', 'encuestas'),
+        #'PASSWORD': os.environ.get('POSTGRESENCUESTA_ENV_POSTGRES_PASSWORD', 'mysecurepass'),
+        #'HOST': os.environ.get('POSTGRESENCUESTA_PORT_5432_TCP_ADDR', '0.0.0.0'),
+        #'PORT': os.environ.get('POSTGRESENCUESTA_PORT_5432_TCP_PORT', '5433')
     }
 }
 
