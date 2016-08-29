@@ -1,0 +1,109 @@
+#bar-chart {
+  width: 100%;
+  height: 500px;
+  position: relative;
+}
+
+.title-pop {
+  color: #00CC99;
+}
+
+svg {
+  width: 100%;
+  height: 100%;
+  position: center;
+  overflow: visible !important;
+}
+
+.legend {
+    font-size: 60%;
+}
+
+rect {
+    stroke-width: 2;
+}
+
+text {
+  font-size: 11px;
+}
+
+.axis text {
+  font-size: 11px;
+}
+
+.axis path{
+  fill: none;
+  stroke: #000;
+}
+
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.axis .tick line {
+  stroke-width: 1;
+  stroke: rgba(0, 0, 0, 0.2);
+}
+
+.axisHorizontal path{
+  fill: none;
+}
+
+.axisHorizontal line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.axisHorizontal .tick line {
+  stroke-width: 1;
+  stroke: rgba(0, 0, 0, 0.2);
+}
+
+.bar {
+  fill: steelblue;
+  fill-opacity: .9;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.toolTip {
+  position: absolute;
+	display: none;
+	width: auto;
+	height: auto;
+	background: none repeat scroll 0 0 white;
+	border: 0 none;
+	box-shadow: 0 0 8px rgba(0,0,0,0.7);
+	background: #FFFFFF;
+  color: #484848;
+	line-height: 1;
+  padding: 18px 12px 19px;
+  font-family: "Open sans";
+}
+
+/* Creates a small triangle extender for the tooltip */
+.toolTip:after {
+  font-size: 20px;
+  color: #FFFFFF;
+  content: "\25BC";
+  text-shadow: 0 3px 6px rgba(0,0,0,0.7);
+  position: absolute;
+  left: 40%;
+  bottom: -15px;
+}
+
+/* Style northward tooltips differently */
+.toolTip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
+}
+
+.svgLegend4 {
+  margin: 50px 0 0 82px;
+}

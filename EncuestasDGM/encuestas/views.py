@@ -88,6 +88,27 @@ def crear_encuesta_view(request):
     return render(request, 'encuestas/administrador/crear_encuesta.html')
 
 
+@login_required(login_url='/encuestas/usuarios/login/')
+def resultados_admin(request, slug=''):
+    """
+    Vista del admin en datos.gob
+    donde se visualizan los resultados
+    de una encuesta
+    URL: /encuestas/administrador/resultados/{slug}
+    METODOS: GET
+    """
+    # Buscar la encuesta en la base de datos
+    try:
+        encuesta = Encuesta.objects.get(slug=slug)
+    except:
+        raise Http404
+
+    estatus = error = ''
+
+
+    return render(request, 'encuestas/administrador/resultados_encuesta.html', {'encuesta': encuesta})
+
+
 def responder_encuesta(request, slug=''):
     """
     Vista publica en datos.gob donde
@@ -119,3 +140,19 @@ def responder_encuesta(request, slug=''):
         return JsonResponse({'error': str(error), 'estatus': estatus})
 
     return render(request, 'encuestas/responder.html', {'encuesta': encuesta})
+
+
+def encuestas_publico(request, page=1):
+    """
+    Vista publica en datos.gob donde
+    se listan todas las encuestas abiertas
+    al publico.
+    URL: /encuestas/{page}/
+    METODOS: GET
+    """
+    encuestas = Encuesta.objects.filter(abierta=True, publicada=True).order_by('-fecha_creacion')
+    paginador_encuestas = Paginator(encuestas, 10)
+
+    pagina = paginador_encuestas.page(page=page)
+
+    return render(request, 'encuestas/encuestas.html', {'encuestas': pagina})
