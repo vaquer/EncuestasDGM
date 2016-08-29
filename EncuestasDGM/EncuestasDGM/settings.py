@@ -79,11 +79,11 @@ WSGI_APPLICATION = 'EncuestasDGM.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ.get('POSTGRESENCUESTA_POSTGRES_DB', 'encuestas'),
-        'USER': os.environ.get('POSTGRESENCUESTA_POSTGRES_USER', 'encuestas'),
-        'PASSWORD': os.environ.get('POSTGRESENCUESTA_POSTGRES_PASSWORD', 'mysecurepass'),
-        'HOST': os.environ.get('POSTGRES_HOST', '0.0.0.0'),
-        'PORT': os.environ.get('POSTGRES_PORT', '5433')
+        'NAME': os.environ.get('POSTGRESENCUESTA_ENV_POSTGRES_DB', 'encuestas'),
+        'USER': os.environ.get('POSTGRESENCUESTA_ENV_POSTGRES_USER', 'encuestas'),
+        'PASSWORD': os.environ.get('POSTGRESENCUESTA_ENV_POSTGRES_PASSWORD', 'mysecurepass'),
+        'HOST': os.environ.get('POSTGRESENCUESTA_PORT_5432_TCP_ADDR', '0.0.0.0'),
+        'PORT': os.environ.get('POSTGRESENCUESTA_PORT_5432_TCP_PORT', '5433')
     }
 }
 
@@ -133,4 +133,5 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static/')
 ]
 
-connect('encuesta_dgm', host='0.0.0.0', port=27017)
+# MOONGO ENGINE CONFIG
+connect(os.environ.get('MONGO_DB', 'encuesta_dgm'), host=os.environ.get('MONGOENCUESTAS_PORT_27017_TCP_ADDR', '0.0.0.0'), port=os.environ.get('MONGOENCUESTAS_PORT_27017_TCP_PORT', 27017))
