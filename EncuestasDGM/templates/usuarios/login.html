@@ -4,15 +4,19 @@
 
 {% block content %}
     <div>
-        <h1>Login</h1>
+        <h1>Ingresar</h1>
         {% if error %}
             <p>{{error}}</p>
         {% endif %}
         {{ form.non_field_errors }}
         <form action="." method="POST">
-            {% csrf_token %}
-            {{form}}
-            <input type="submit" value="Log in">
+            <div class="col-sm-6 col-sm-offset-3">
+                {% csrf_token %}
+                {{form}}
+                <div style="float:right;">
+                    <input type="submit" class="btn btn-primary" value="Entrar">
+                </div>
+            </div>
         </form>
     </div>
 {% endblock %}

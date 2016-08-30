@@ -19,8 +19,8 @@ class LoginForm(forms.Form):
     """
     Formulario de Login.
     """
-    username = forms.CharField(label='Usuario')
-    password = forms.CharField(label='Password', widget=forms.PasswordInput)
+    username = forms.CharField(label='Usuario', widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre de usuario'}))
+    password = forms.CharField(label='Contraseña', widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Contraseña'}))
 
 
 class TokenRenewPasswordGenerator(forms.Form):
