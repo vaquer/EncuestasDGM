@@ -68,6 +68,8 @@ class Encuesta(Document):
             if len(pregunta.opciones) > 0:
                 pregunta_aux = OrderedDict()
                 pregunta_aux["label"] = pregunta.texto
+                pregunta_aux["valoresarray"] = None
+
                 for opcion in pregunta.opciones:
                     pregunta_aux[opcion] = 0
 
@@ -79,13 +81,24 @@ class Encuesta(Document):
           "valores": preguntas_array
         }
 
+        counter = 0
         for pregunta in preguntas_resultados.keys():
             for resultado in preguntas_resultados[pregunta]:
                 for valores in respuesta_de_barchart['valores']:
                     if valores['label'] == pregunta:
                         valores[preguntas[pregunta].opciones[int(resultado) - 1]] += 1
 
-        return json.dumps(respuesta_de_barchart)
+        elemento_aux = []
+
+        for elemento in respuesta_de_barchart['valores']:
+            elemento_aux.append([elemento['label'], 'valor'])
+            for opcion in elemento.keys():
+                if opcion != 'label' and opcion != 'valoresarray' and opcion:
+                    elemento_aux.append([opcion, elemento[opcion]])
+            elemento['valoresarray'] = json.dumps(elemento_aux)
+            counter += 1
+
+        return respuesta_de_barchart
 
     def save(self, *args, **kwargs):
         if not self.fecha_creacion:

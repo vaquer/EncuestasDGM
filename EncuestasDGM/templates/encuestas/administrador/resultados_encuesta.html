@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 {% load static from staticfiles %}
 
+{% block title %}
+  Resultados: {{encuesta.titulo}}
+{% endblock %}
+
+{% block style_contenedor %}style="margin-bottom: 30px;"{% endblock%}
+
 {% block css_links %}
     <link rel="stylesheet" type="text/css" href="{% static "css/barchart.css" %}">
     <link rel="stylesheet" type="text/css" href="{% static "css/resultados-encuestas.css" %}">
@@ -21,8 +27,8 @@
     </ul>
 
     <!-- Tabs content -->
-    <div class="tab-content">
-      <div id="preguntas-cerradas" class="tab-pane fade {% if not respuestas.abierta %}in active{% else %}{% endif %}">
+    <div class="tab-content" style="margin-bottom: 30px;">
+      <div id="preguntas-cerradas" class="tab-pane fade active in">
 
         <div class="col-xs-12">
               <!-- Contenedor de gráfica -->
@@ -41,7 +47,7 @@
         </div>
 
       </div>
-      <div id="preguntas-abiertas" class="tab-pane fade {% if not respuestas.cerradas %}in active{% else %}{% endif %}">
+      <div id="preguntas-abiertas" class="tab-pane">
           {% for pregunta,respuestas in encuesta.devuelve_respuestas.items %}
               {% if respuestas.abierta %}
                   <p>{{pregunta}}</p>
@@ -67,33 +73,18 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <!-- Custom JS -->
     <script type="text/javascript">
-      {% autoescape off %}
-        jsonBarchart = {{encuesta.devuelve_respuestas_cerradas}};
-        jsonBarchart2 = {{encuesta.devuelve_respuestas_cerradas}};
-      {% endautoescape %}
-
-      console.log(jsonBarchart);
-      ///// BarChart
-          //google.charts.load('current', {packages: ['corechart','bar']});
           google.charts.load('current', {'packages':['corechart','bar']});
           google.charts.setOnLoadCallback(drawChart);
           function drawChart() {
 
-            var data1 = google.visualization.arrayToDataTable([
-              ['Respuestas', 'valor'],
-              ['Opcion 1', 3],
-              ['Opcion 2', 8],
-              ['Opcion 3', 2,],
-              ['Opcion 4', 8,]
-            ]);
-
-            var data2 = google.visualization.arrayToDataTable([
-              ['Respuestas', 'valor'],
-              ['Opcion 1', 7],
-              ['Opcion 2', 12],
-              ['Opcion 3', 3],
-              ['Opcion 4', 8,]
-            ]);
+            {% for pregunta in encuesta.devuelve_respuestas_cerradas.valores %}
+              var data{{forloop.counter}} = google.visualization.arrayToDataTable(
+                {% autoescape off %}
+                {{pregunta.valoresarray}}
+                  
+                {% endautoescape %}
+              );              
+            {% endfor %}
 
             var options = {
               legend: { position: "none" },
@@ -102,9 +93,11 @@
 
             var chart1 = new google.charts.Bar(document.getElementById('bar-chart1'));
             chart1.draw(data1, options);
-            var chart2 = new google.charts.Bar(document.getElementById('bar-chart2'));
-            chart2.draw(data2, options);
 
+            if (typeof data2 !== 'undefined'){
+              var chart2 = new google.charts.Bar(document.getElementById('bar-chart2'));
+              chart2.draw(data2, options);
+            }
           };
 
     </script>
