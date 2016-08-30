@@ -153,6 +153,6 @@ def encuestas_publico(request, page=1):
     encuestas = Encuesta.objects.filter(abierta=True, publicada=True).order_by('-fecha_creacion')
     paginador_encuestas = Paginator(encuestas, 10)
 
-    pagina = paginador_encuestas.page(page=page)
+    pagina = paginador_encuestas.page(page)
 
-    return render(request, 'encuestas/encuestas.html', {'encuestas': pagina})
+    return render(request, 'encuestas/encuestas.html', {'encuestas': pagina, 'page_number': page})

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Encuestas{% endblock %}
+
+{% block breadcum %}
+    <li ng-repeat="crumb in crumbs" class="ng-scope"><a ui-sref="front.section( crumb.params )" ui-sref-opts="{ inherit : false }" class="ng-binding" href="/encuestas/">Encuestas</a></li>
+{% endblock %}
+
+{% block content %}
+    <h2 class="section-title ng-binding">Encuestas</h2>
+    <div ng-if="section == 'blog'" class="row posts-row ng-scope">
+        {% for encuesta in encuestas.object_list %}
+            <div ng-repeat-start="post in posts" class="col-md-6 post-item ng-scope">
+                <div class="inner">
+                    <a href="/encuestas/responde/{{encuesta.slug}}/">
+                        {% if forloop.counter|divisibleby:"2" %}
+                            <img class="ng-scope" src="http://datos.gob.mx/public/img/uploads/5768ab1168f81c6e0052015f/UuDgZpqE7VvEYnoZ.png">
+                        {% comment %}
+                        {% elif forloop.counter|divisibleby:"3" %}
+                            <img class="ng-scope" src="http://datos.gob.mx/public/img/uploads/57a377c49e24ba6a00e30d85/hO3Ho8ZlrUVD27nM.png">
+                        {% endcomment %}
+                        {% else %}
+                            <img class="ng-scope" src="http://datos.gob.mx/public/img/uploads/5768ab1168f81c6e00520199/byPdEk5FT3orPy6I.png">
+                        {% endif %}
+                    </a>
+                </div>
+                <div class="post-info ng-scope">
+                    <h3><a alt="{{encuesta.titulo}}" class="ng-binding ng-scope" href="/encuestas/responde/{{encuesta.slug}}/">{{encuesta.titulo}}</a>
+                    </h3>
+                    <p class="excerpt hidden-xs hidden-sm ng-binding">{{encuesta.encabezado}}
+                    </p>
+
+                    <p class="author ng-binding">Coordinación de Estrategia Digital Nacional
+                    <a alt="{{encuesta.titulo}}" class="read-more ng-scope" href="/encuestas/responde/{{encuesta.slug}}/">Responder</a>
+                    </p>
+                </div>
+            </div>
+        {% endfor %}
+        <p class="text-center">
+            <ul class="pagination ng-isolate-scope ng-not-empty ng-valid ng-dirty ng-valid-parse">
+                {% if encuestas.has_previous %}
+                <li class="pagination-first ng-scope">
+                    <a href="/encuestas/p/{{encuestas.previous_page_number}}" class="ng-binding">«</a>
+                </li>
+                    
+                {% endif %}
+  
+                <li class="pagination-page ng-scope">
+                    <a href="." >{{page_number}}</a>
+                </li>
+
+                {% if encuestas.has_next %}
+                    <li class="pagination-next ng-scope">
+                        <a href="/encuestas/p/{{encuestas.next_page_number}}" class="ng-binding">›</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </p>
+    </div>
+{% endblock %}

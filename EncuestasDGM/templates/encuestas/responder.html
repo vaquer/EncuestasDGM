@@ -2,7 +2,6 @@
 
 {% block title %}Responder {{encuesta.title}}{% endblock %}
 
-
 {% block css_links %}
 <link rel="stylesheet" type="text/css" href="/static/css/crear_encuesta.css">
 <link rel="stylesheet" type="text/css" href="/static/css/sweetalert.css">
@@ -26,12 +25,14 @@
                             <label class="texto-pregunta" link="{{pregunta.texto}}">{{pregunta.texto}}</label><br>
                             {% if pregunta.opciones %}
                                 {% with forloop.counter as numero_pregunta  %}
-                                {% for opcion in pregunta.opciones  %}
-                                <div class="radio">
-                                    <label>
-                                      <input type="radio" name="{{pregunta.texto}}" value="{{forloop.counter}}">{{opcion}}
-                                    </label>
-                                </div>
+                                {% for opcion in pregunta.opciones %}
+                                    {% if opcion %}
+                                        <div class="radio">
+                                            <label>
+                                              <input type="radio" name="{{pregunta.texto}}" value="{{forloop.counter}}">{{opcion}}
+                                            </label>
+                                    </div>
+                                    {% endif %}
                                 {% endfor %}
                                 
                                 {% endwith %}

@@ -33,10 +33,11 @@
                 <thead>
                     <tr>
                         <th>Encuesta</th>
-                        <th>Encabezado</th>
+                        <th>Descripción</th>
                         <th>Fecha</th>
                         <th>Publicada</th>
                         <th>Abierta</th>
+                        <th>Resultados</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -44,9 +45,26 @@
                     <tr>
                         <td><a href="/encuestas/administrador/editar-encuesta/{{encuesta.slug}}/">{{encuesta.titulo}}</a></td>
                         <td>{{encuesta.encabezado|truncatewords:5}}</td>
-                        <td>{{encuesta.fecha_creacion}}</td>
-                        <td>{{encuesta.publicada}}</td>
-                        <td>{{encuesta.abierta}}</td>
+                        <td>{{encuesta.fecha_creacion|date:"d/m/Y"}}</td>
+                        <td>
+                            {% if encuesta.publicada %}
+                                <span class="glyphicon glyphicon-ok" style="margin-left: 25px; color: #0c9;"></span>
+                            {% else %}
+                                <span class="glyphicon glyphicon-remove" style="margin-left: 25px;"></span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if encuesta.abierta %}
+                               <span class="glyphicon glyphicon-ok" style="margin-left: 25px; color: #0c9;"></span>
+                            {% else %}
+                                <span class="glyphicon glyphicon-remove" style="margin-left: 25px;"></span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="/encuestas/administrador/resultados/{{encuesta.slug}}/">
+                                <span class="glyphicon glyphicon-zoom-in" style="margin-left: 25px;"></span>
+                            </a>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
