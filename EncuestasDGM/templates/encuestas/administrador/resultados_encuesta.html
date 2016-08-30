@@ -30,32 +30,28 @@
     <div class="tab-content" style="margin-bottom: 30px;">
       <div id="preguntas-cerradas" class="tab-pane fade active in">
 
-        <div class="col-xs-12">
+        <div class="col-xs-12 padding-charts">
               <!-- Contenedor de gráfica -->
               <div id="bar-chart1"></div>
-              <div class="svgLegend4">
-                  <div class="legend4"></div>
-              </div>
         </div>
         <br>
         <div class="col-xs-12">
           <!-- Contenedor de gráfica 2 -->
           <div id="bar-chart2"></div>
-          <div class="svgLegend4_2">
-              <div class="legend4_2"></div>
-          </div>
         </div>
 
       </div>
       <div id="preguntas-abiertas" class="tab-pane">
           {% for pregunta,respuestas in encuesta.devuelve_respuestas.items %}
               {% if respuestas.abierta %}
-                  <p>{{pregunta}}</p>
-                  <ul>
+                <div class="col-xs-12 padding-charts">
+                  <h4><strong>{{pregunta}}</strong></h4>
+                  <ol class="list-group">
                       {% for respuesta in respuestas.valores %}
-                          <li>{{respuesta}}</li>
+                          <li class="list-group-item"><p>{{respuesta}}</p></li>
                       {% endfor %}
-                  </ul>
+                  </ol>
+                </div>
               {% endif %}
           {% endfor %}
       </div>
@@ -73,8 +69,9 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <!-- Custom JS -->
     <script type="text/javascript">
-          google.charts.load('current', {'packages':['corechart','bar']});
+          google.charts.load('current', {packages:['corechart','bar']});
           google.charts.setOnLoadCallback(drawChart);
+
           function drawChart() {
 
             {% for pregunta in encuesta.devuelve_respuestas_cerradas.valores %}
@@ -84,19 +81,43 @@
                   
                 {% endautoescape %}
               );              
-            {% endfor %}
 
-            var options = {
+            var options{{forloop.counter}} = {
+              hAxis: {
+                title: '{{pregunta.label}}',
+                titleTextStyle: {
+                  fontSize: 14,
+                  color: '#424242',
+                  bold: true,
+                  italic: false,
+                  padding: 20
+                }
+              },
+              vAxis: {
+                title: 'No. de respuestas',
+                titleTextStyle: {
+                  fontSize: 14,
+                  color: '#424242',
+                  bold: true,
+                  italic: false
+                },
+                gridlines: {
+                  color: '#FFFFFF',
+                  count: -1
+                }
+              },
               legend: { position: "none" },
               colors: [ "#00cc99", "#ff6666", "#663399", "#474747"]
             };
 
-            var chart1 = new google.charts.Bar(document.getElementById('bar-chart1'));
-            chart1.draw(data1, options);
+            {% endfor %}
+
+            var chart1 = new google.visualization.ColumnChart(document.getElementById('bar-chart1'));
+            chart1.draw(data1, options1);
 
             if (typeof data2 !== 'undefined'){
-              var chart2 = new google.charts.Bar(document.getElementById('bar-chart2'));
-              chart2.draw(data2, options);
+              var chart2 = new google.visualization.ColumnChart(document.getElementById('bar-chart2'));
+              chart2.draw(data2, options2);
             }
           };
 
